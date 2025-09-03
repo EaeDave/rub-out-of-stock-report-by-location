@@ -16,6 +16,8 @@ async function loginRUB(driver) {
         console.log('🌐 RUB page found successfully.');
     } catch (error) {
         console.log(`❌ RUB page not found ${error.message}.`);
+        driver.quit();
+        process.exit(1);
     }
     
     try {
@@ -24,6 +26,8 @@ async function loginRUB(driver) {
         console.log('🔐 Login field founded and filled.');
     } catch (error) {
         console.log(`❌ Login field not found ${error.message}.`);
+        driver.quit();
+        process.exit(1);
     }
     
     try {
@@ -32,12 +36,29 @@ async function loginRUB(driver) {
         console.log('🔐 Password field founded and filled.');
     } catch (error) {
         console.log(`❌ Password field not found ${error.message}.`);
+        driver.quit();
+        process.exit(1);
     }
     
-
     const loginButton = driver.wait(until.elementLocated(By.id('login-vbtn-loginbtn')), 10000);
     await loginButton.click();
-    console.log('🔓 Successfully logged in.');
+
+    try {
+        const errorElement = await driver.wait(
+        until.elementLocated(By.css('.flexItem.errorbody')),
+        1000);
+
+        const errorText = await errorElement.getText();
+        if (errorText.includes('Senha e/ou usuário inválido')) {
+            console.log('❌ Login or password is incorrect.');
+            await driver.quit();
+            process.exit(1);
+        }
+
+    } catch (error) {
+        console.log('🔓 Successfully logged in.');
+    }
+    
 }
 
 
