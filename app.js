@@ -1,35 +1,68 @@
 const { Builder, By, until } = require('selenium-webdriver');
+const chrome = require('selenium-webdriver/chrome');
 require('dotenv').config();
+
 
 function delay(s) {
     return new Promise(resolve => setTimeout(resolve, s * 1000));
 }
 
 
-async function loginRUB(chrome) {
+async function loginRUB(driver) {
     const RUB_IP = process.env.RUB_IP;
-    await chrome.get(`http://${RUB_IP}/vue/#/core/local`);
+
+    try {
+        await driver.get(`http://${RUB_IP}/vue/#/core/local`);
+        console.log('🌐 RUB page found successfully.');
+    } catch (error) {
+        console.log(`❌ RUB page not found ${error.message}.`);
+    }
     
-    const loginField = await chrome.wait(until.elementLocated(By.id('login-fld-usr')), 10000);
-    loginField.sendKeys(process.env.RUB_USER);
+    try {
+        const loginField = driver.wait(until.elementLocated(By.id('login-fld-usr')), 10000);
+        await loginField.sendKeys(process.env.RUB_USER);
+        console.log('🔐 Login field founded and filled.');
+    } catch (error) {
+        console.log(`❌ Login field not found ${error.message}.`);
+    }
+    
+    try {
+        const passwordField = driver.wait(until.elementLocated(By.id('login-fld-pwd')), 10000);
+        await passwordField.sendKeys(process.env.RUB_PASSWORD);
+        console.log('🔐 Password field founded and filled.');
+    } catch (error) {
+        console.log(`❌ Password field not found ${error.message}.`);
+    }
+    
 
-    const passwordField = await chrome.wait(until.elementLocated(By.id('login-fld-pwd')), 10000);
-    passwordField.sendKeys(process.env.RUB_PASSWORD);
+    const loginButton = driver.wait(until.elementLocated(By.id('login-vbtn-loginbtn')), 10000);
+    await loginButton.click();
+    console.log('🔓 Successfully logged in.');
+}
 
-    const loginButton = await chrome.wait(until.elementLocated(By.id('login-vbtn-loginbtn')), 10000);
-    loginButton.click();
-    console.log('🔐 Successfully logged in.');
+
+async function applyFilter(driver) {
+    const filterButton = driver.wait(until.elementLocated(By.id('local-vbtn-optionsdialogopenbutton')), 10000);
+    await filterButton.click();
+    console.log('⚙️ Filter clicked successfully.');
 }
 
 
 async function run() {
-    const chrome = await new Builder().forBrowser('chrome').build();
+    const options = new chrome.Options();
+    options.addArguments('log-level=3');  // shows only erros in the terminal
+
+    const driver = await new Builder()
+    .forBrowser('chrome')
+    .setChromeOptions(options)
+    .build();
 
     try {
-        await loginRUB(chrome);
+        await loginRUB(driver);
+        await applyFilter(driver);
         await delay(2);
     } finally {
-        await chrome.quit();
+        await driver.quit();
     }
 }
 
