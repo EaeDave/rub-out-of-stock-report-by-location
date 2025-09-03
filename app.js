@@ -54,7 +54,13 @@ async function loginRUB(driver) {
             await driver.quit();
             process.exit(1);
         }
-
+        
+        if (errorText.includes('Usuário bloqueado')) {
+            console.log('❌ User is blocked.');
+            await driver.quit();
+            process.exit(1);
+        }
+  
     } catch (error) {
         console.log('🔓 Successfully logged in.');
     }
