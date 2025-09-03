@@ -1,4 +1,4 @@
-const { Builder } = require('selenium-webdriver');
+const { Builder, By, until } = require('selenium-webdriver');
 require('dotenv').config();
 
 function delay(s) {
@@ -6,12 +6,27 @@ function delay(s) {
 }
 
 
+async function loginRUB(chrome) {
+    const RUB_IP = process.env.RUB_IP;
+    await chrome.get(`http://${RUB_IP}/vue/#/core/local`);
+    
+    const loginField = await chrome.wait(until.elementLocated(By.id('login-fld-usr')), 10000);
+    loginField.sendKeys(process.env.RUB_USER);
+
+    const passwordField = await chrome.wait(until.elementLocated(By.id('login-fld-pwd')), 10000);
+    passwordField.sendKeys(process.env.RUB_PASSWORD);
+
+    const loginButton = await chrome.wait(until.elementLocated(By.id('login-vbtn-loginbtn')), 10000);
+    loginButton.click();
+    console.log('🔐 Successfully logged in.');
+}
+
+
 async function run() {
     const chrome = await new Builder().forBrowser('chrome').build();
-    const RUB_IP = process.env.RUB_IP;
 
     try {
-        await chrome.get(`http://${RUB_IP}/vue/#/core/local`);
+        await loginRUB(chrome);
         await delay(2);
     } finally {
         await chrome.quit();
