@@ -1,0 +1,24 @@
+{
+  "name": "rub-out-of-stock-report-by-location",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EaeDave/rub-out-of-stock-report-by-location.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EaeDave/rub-out-of-stock-report-by-location/issues"
+  },
+  "homepage": "https://github.com/EaeDave/rub-out-of-stock-report-by-location#readme",
+  "dependencies": {
+    "dotenv": "^17.2.2",
+    "selenium-webdriver": "^4.35.0"
+  }
+}
